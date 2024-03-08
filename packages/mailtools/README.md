@@ -4,7 +4,17 @@
 
 We picked up on `tempo-email-parser` which was not being maintained any more and updated it to modern tooling and dependencies. We are using this package at uninbox.com, but everyone is allowed to use it as they want.
 
-## Notes
+## Features
 
-- The original package didn't pass all of the tests. We haven't implemented missing features till now. But we plan to do that soon. Note that features like Quote Stripping doesn't work.
-- Implement all the features and test cases if needed
+- Parse HTML emails
+- Remove quotations, trackers, styles
+- Extract & remove signatures
+- Clean up HTML
+
+## Limitations
+
+It seems like we are unable to extract outlook signatures correctly. We will be working on a fix for this.
+
+## License
+
+This package is licensed under the MIT License. Please see the [LICENSE](./LICENSE) file for more information.
