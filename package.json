@@ -1,0 +1,18 @@
+{
+  "name": "@u22n/packages-monorepo",
+  "version": "0.0.0",
+  "description": "packages and libraries created by the unproprietary corporation team",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "u22n"
+  ],
+  "author": "McPizza0",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}

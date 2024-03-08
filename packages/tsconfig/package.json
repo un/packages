@@ -1,0 +1,25 @@
+{
+  "name": "@u22n/tsconfig",
+  "version": "0.0.1",
+  "description": "tsconfig for @u22n packages",
+  "homepage": "https://github.com/un",
+  "license": "MIT",
+  "author": {
+    "name": "McPizza0"
+  },
+  "files": [
+    "base.json"
+  ],
+  "exports": {
+    ".": "./base.json",
+    "./base.json": "./base.json"
+  },
+  "bugs": {
+    "url": "https://github.com/un/packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/un/packages/issues",
+    "directory": "packages/tsconfig"
+  }
+}
