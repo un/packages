@@ -17,7 +17,8 @@
     "dev": "tsup",
     "start": "tsx playground/index.ts",
     "test": "vitest run",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "publish:jsr": "pnpx jsr publish"
   },
   "repository": {
     "type": "git",
