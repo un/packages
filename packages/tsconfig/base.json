@@ -3,6 +3,13 @@
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "lib": ["ESNext"],
+    "moduleResolution": "Bundler",
+    "alwaysStrict": true,
+    "strict": true,
+    "module": "ESNext",
+    "target": "ESNext"
   }
 }
