@@ -70,6 +70,7 @@ function isEmptyLike(text: Node): boolean {
  * True if the element and its children only contains empty texts
  */
 function containsEmptyText(el: Element): boolean {
+  if (!el) return true;
   if (isText(el)) {
     return isEmpty(el);
   } else if (hasChildren(el)) {

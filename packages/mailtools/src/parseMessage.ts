@@ -96,6 +96,8 @@ export async function parseMessage(
   // Comments are useless, better remove them
   removeComments($);
   removeScripts($);
+  removeStyleTags($);
+  hoistSpecialTags($);
   removeTrackers($);
 
   if (enhanceLinks) {
@@ -213,11 +215,31 @@ function removeScripts($: CheerioAPI): void {
   });
 }
 
+function removeStyleTags($: CheerioAPI): void {
+  $('style').each((_, el) => {
+    $(el).remove();
+  });
+}
+
 function removeComments($: CheerioAPI): void {
   $('*')
     .contents()
     .each((_, el) => {
       if (el.type === 'comment') {
+        $(el).remove();
+      }
+    });
+}
+
+function hoistSpecialTags($: CheerioAPI): void {
+  // Hoist content inside tags <${string}:${string}> to the parent
+  // useful for tags like <o:p> in Outlook
+  $('*:not(body)')
+    .contents()
+    .each((_, el) => {
+      if (el.type === 'tag' && el.name.includes(':')) {
+        const parent = $(el).parent();
+        parent.append($(el).contents());
         $(el).remove();
       }
     });
