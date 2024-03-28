@@ -1,6 +1,6 @@
 {
   "name": "@u22n/mailtools",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "type": "module",
   "description": "Processes HTML email for display. Extracts quotations and more. Successor to tempo-email-parser.",
   "main": "./dist/index.js",
