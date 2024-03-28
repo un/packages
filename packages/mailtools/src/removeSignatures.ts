@@ -81,12 +81,28 @@ function findAllSignatures($: CheerioAPI) {
       // Signatures.
       '.gmail_signature',
       'signature',
+      '#Signature', // outlook web
       '[class*="signature"]', // sig partial match for class names
       '[id*="signature"]' // sig partial match for id names
     ].join(', ')
   );
 
+  // Outlook specific signatures
+  if (
+    signatureElements.length === 0 &&
+    $('html').attr('xmlns:m')?.includes('microsoft')
+  ) {
+    return findAllSignaturesOutlook($);
+  }
+
   return signatureElements;
+}
+
+function findAllSignaturesOutlook($: CheerioAPI) {
+  const start = $(
+    ':has(>[style*="mso-ligatures"], >[style*="mso-fareast"])'
+  ).first();
+  return start.add(start.nextAll());
 }
 
 export default removeSignatures;
