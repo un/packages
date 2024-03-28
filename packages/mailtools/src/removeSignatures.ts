@@ -37,7 +37,7 @@ function removeSignatures(
   const foundPrimarySignatureElements = findAllSignatures(
     cheerioToSearchForSignatures
   );
-  const foundPrimarySignature = foundPrimarySignatureElements.first();
+  const foundPrimarySignature = foundPrimarySignatureElements;
 
   // Iterate over divs and remove those that only contain a single div child
   foundPrimarySignature.find('div').each(function () {
@@ -53,13 +53,17 @@ function removeSignatures(
   returnData.foundSignatureHtml = foundPrimarySignature.html();
 
   // Now proceed with inserting line breaks for plain text
-  foundPrimarySignature.find('div').each(function (i, el) {
+  foundPrimarySignature.find('div,p').each(function (i, el) {
     if (i > 0) {
       // Skip the first div to avoid a leading newline
       $(el).before('\n');
     }
   });
-  returnData.foundSignaturePlainText = foundPrimarySignature.text().trim();
+  returnData.foundSignaturePlainText = foundPrimarySignature
+    .text()
+    .trim()
+    // replace multiple newlines with a single newline
+    .replace(/(\s?\n)+/g, '\n');
 
   // remove all the signatures from the original email
   const allSignatureElementsForRemoval = findAllSignatures(
@@ -102,7 +106,10 @@ function findAllSignaturesOutlook($: CheerioAPI) {
   const start = $(
     ':has(>[style*="mso-ligatures"], >[style*="mso-fareast"])'
   ).first();
-  return start.add(start.nextAll());
+  const signatureTags = start.add(start.nextAll());
+  const newHolder = $('<div></div>');
+  signatureTags.each((_, el) => void newHolder.append($(el)));
+  return newHolder;
 }
 
 export default removeSignatures;
