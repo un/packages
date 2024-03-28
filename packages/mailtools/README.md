@@ -5,11 +5,11 @@ Also runs several transformations to the email so that it can be displayed safel
 
 ## Features
 
--   Extract quotations (replies), signatures
--   Remove scripts, trackers
--   Convert text links into anchor tags
--   Remove trailing whitespaces
--   Block remote content
+- Extract quotations (replies), signatures
+- Remove scripts, trackers
+- Convert text links into anchor tags
+- Remove trailing whitespaces
+- Block remote content
 
 ## Usage
 
@@ -22,8 +22,8 @@ const emailHtml = `
 `;
 
 const parsedEmail = parseMessage(emailHtml);
-
 ```
+
 ### Options
 
 ```ts
@@ -51,7 +51,9 @@ const parseOptions: ParseMessageOptions = {
   cleanStyles: false
 };
 ```
+
 ### Outputs
+
 ```ts
 const {
 	/** The original complete message. */
@@ -70,20 +72,22 @@ const {
 ```
 
 ### Other
+
 Autolinking and remote-content blocking are available as separate functions as well.
 
 ```js
 const withLinks = linkify(messageHtml);
 
 const noRemoteContent = blockRemoteContent(
-	messageHtml,
-	remoteContentReplacements
+  messageHtml,
+  remoteContentReplacements
 );
 ```
 
 ## Development
 
 ### Playground
+
 We have included a playground for local testing of functionality and features.
 
 Edit the email html in `playground/index.ts` and run with `pnpm run start`.
@@ -104,12 +108,8 @@ This script generates the respective outputs files for any `.input.html` file fo
 
 To easily add a fixture from a real-world email, you can put the input HTML at `/src/tests/prepareMessage/my-test.input.html`, and then run `pnpm run generate:fixtures` to generate the output files based on what `prepareMessage` produced. You now only have to check that the outputs look good and make adjustments if necessary.
 
-### Benchmarks
-
-There are benchmarks to ensure the tool remains fast to not alter UI performance, and also to compare some external libraries. See the `benchmark` folder.
-
-
 ## History
+
 `@u22n/mailtools` is a modified and more feature filled version of [`tempo-email-parser`](https://github.com/yourtempo/tempo-email-parser).
 
 We picked up on `tempo-email-parser` which was not being maintained any more and updated it to modern tooling and dependencies. We are using this package at uninbox.com, everyone is free to use as they want and need.
