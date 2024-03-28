@@ -106,10 +106,14 @@ function findAllSignaturesOutlook($: CheerioAPI) {
   const start = $(
     ':has(>[style*="mso-ligatures"], >[style*="mso-fareast"])'
   ).first();
+<<<<<<< HEAD
   const signatureTags = start.add(start.nextAll());
   const newHolder = $('<div></div>');
   signatureTags.each((_, el) => void newHolder.append($(el)));
   return newHolder;
+=======
+  return start.add(start.nextAll());
+>>>>>>> 112793a (feat: parse outlook signatures)
 }
 
 export default removeSignatures;
