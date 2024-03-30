@@ -1,3 +1,4 @@
+/** @type {import("prettier").Config} */
 module.exports = {
   bracketSpacing: true,
   bracketSameLine: true,
@@ -8,7 +9,16 @@ module.exports = {
   semi: true,
   printWidth: 80,
   tabWidth: 2,
+  useTabs: false,
   arrowParens: 'always',
-  overrides: [],
-  singleAttributePerLine: true
+  singleAttributePerLine: true,
+  plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
+  overrides: [
+    {
+      files: '*.svelte',
+      options: {
+        parser: 'svelte'
+      }
+    }
+  ]
 };
