@@ -49,6 +49,7 @@
     "nanoid": "^5.0.6",
     "qrcode": "^1.5.3",
     "svelte-sonner": "^0.3.20",
+    "svelte-turnstile": "^0.5.0",
     "tailwind-merge": "^2.2.2",
     "tailwind-variants": "^0.2.1"
   }

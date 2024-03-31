@@ -42,6 +42,7 @@
   let feedbackType = '';
   let additionalComments = '';
   let pending = false;
+  let tab = 'parsed';
 
   function giveFeedback(type: 'correct' | 'incorrect') {
     feedbackType = type;
@@ -61,11 +62,16 @@
         options: JSON.stringify(options)
       })
     })
-      .then(() => {
+      .then(async (e) => {
+        const res = await e.json();
         dialogOpen = false;
         feedbackType = '';
         additionalComments = '';
-        toast('Feedback submitted successfully');
+        if (res.success) {
+          toast('Feedback submitted successfully');
+        } else {
+          toast(res.message);
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -99,7 +105,7 @@
         </Card.Description>
       </Card.Header>
       <Card.Content>
-        <Tabs.Root value="parsed">
+        <Tabs.Root bind:value={tab}>
           <Tabs.List>
             <Tabs.Trigger value="options">Parser Options</Tabs.Trigger>
             <Tabs.Trigger value="parsed">View Parsed Email</Tabs.Trigger>
@@ -203,20 +209,29 @@
                 <hr class="w-full" />
                 <Skeleton class="mx-auto h-12 w-64" />
               {:then html}
-                <div class="flex min-h-32 w-full flex-col gap-2">
+                <div
+                  class="flex min-h-32 w-full flex-col gap-2 rounded-md border p-1">
                   <h2 class="font-semibold">Parsed Email</h2>
                   <iframe
-                    sandbox=""
+                    on:load={(e) => {
+                      // @ts-expect-error
+                      e.currentTarget.style.height = `${Math.max(e.currentTarget.contentWindow.document.body.offsetHeight + /* extra padding */ 32, 300)}px`;
+                    }}
+                    sandbox="allow-same-origin"
                     class="w-full py-2"
                     srcdoc={html.parsedMessageHtml}
                     title="Parsed email" />
                 </div>
                 {#if options.cleanSignatures}
-                  <div class="min-h-32 w-full gap-2">
+                  <div class="min-h-32 w-full gap-2 rounded-md border p-1">
                     {#if html.foundSignatureHtml}
                       <h2 class="font-semibold">Found Signature</h2>
                       <iframe
-                        sandbox=""
+                        on:load={(e) => {
+                          // @ts-expect-error
+                          e.currentTarget.style.height = `${Math.max(e.currentTarget.contentWindow.document.body.offsetHeight, 150)}px`;
+                        }}
+                        sandbox="allow-same-origin"
                         class="w-full py-2"
                         srcdoc={html.foundSignatureHtml}
                         title="Parsed email Signature" />
@@ -257,12 +272,20 @@
             </div>
           </Tabs.Content>
           <Tabs.Content value="original">
-            <div class="p-4">
-              <iframe
-                class="h-fit w-full"
-                sandbox=""
-                srcdoc={data.content}
-                title="Original email" />
+            <div class="flex flex-col gap-4">
+              <h2 class="font-semibold">Original Email</h2>
+              <!-- Force it to load once its visible to set the height -->
+              {#if tab === 'original'}
+                <iframe
+                  class="min-h-32 w-full"
+                  on:load={(e) => {
+                    // @ts-expect-error
+                    e.currentTarget.style.height = `${Math.max(e.currentTarget.contentWindow.document.body.offsetHeight + /* extra padding */ 16, 300)}px`;
+                  }}
+                  sandbox="allow-same-origin"
+                  srcdoc={data.content}
+                  title="Original email" />
+              {/if}
             </div>
           </Tabs.Content>
         </Tabs.Root>
@@ -275,14 +298,12 @@
           <Dialog.Title>Submit Feedback</Dialog.Title>
           <Dialog.Description class="flex flex-col gap-3">
             <p>
-              The feedback you submit will be public and visible to all users.
               Please do not submit any personal information in additional
               comments.
             </p>
             <p class="font-medium">
-              However the email you are submitting feedback on won't be made
-              visible to any one else than Uninbox Team and would be deleted
-              once we have reviewed the feedback.
+              UnInbox Team will review your feedback and your email would be
+              deleted once we have reviewed the feedback.
             </p>
             <span class="font-semibold">
               You are submitting feedback that the parsing was <span

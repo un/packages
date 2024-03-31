@@ -4,8 +4,8 @@ import { and, eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-  const token = cookies.get('token');
+export const load: PageServerLoad = async ({ cookies, url }) => {
+  const token = url.searchParams.get('token') || cookies.get('token');
   const email = await db.query.emails.findFirst({
     where: and(eq(emails.token, token || '')),
     columns: {
