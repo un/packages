@@ -5,7 +5,7 @@
 import crypto from 'crypto';
 
 export async function validatePostalWebhookSignature(
-  body: string,
+  bodyJson: unknown,
   postalSignature: string,
   postalWebhookPKs: string[]
 ): Promise<boolean> {
@@ -15,8 +15,9 @@ export async function validatePostalWebhookSignature(
       '-----BEGIN PUBLIC KEY-----\r\n' +
       chunkSplit(postalWebhookPK, 64, '\r\n') +
       '-----END PUBLIC KEY-----';
+
     const verifier = crypto.createVerify('SHA1');
-    verifier.update(jsonToRubyString(body));
+    verifier.update(jsonToRubyString(bodyJson));
 
     // if verification passes for any key, return true
     if (verifier.verify(publicKey, postalSignature, 'base64')) {
@@ -40,8 +41,8 @@ function chunkSplit(key: string, chunkSize: number, newLineReturn: string) {
   return chunked;
 }
 
-function jsonToRubyString(jsonString: string) {
-  const json = JSON.stringify(jsonString);
+function jsonToRubyString(jsonObject: unknown) {
+  const json = JSON.stringify(jsonObject);
   return json.replace(
     /[\u2028\u2029&><]/gu,
     (c) => '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4)
