@@ -11,7 +11,10 @@ const postalPublicKeys = JSON.parse(POSTAL_PUBLIC_KEYS) as string[];
 
 export const POST: RequestHandler = async ({ request }) => {
   const body = await request.text();
-  const signature = request.headers.get('x-postal-signature') || '';
+  const signature = request.headers.get('x-postal-signature');
+  if (!signature) {
+    error(401, 'No signature provided');
+  }
   const valid = await validatePostalWebhookSignature(
     body,
     signature,
@@ -20,12 +23,17 @@ export const POST: RequestHandler = async ({ request }) => {
   if (!valid) {
     error(401, 'Invalid signature');
   }
-  const { message, id, rcpt_to, mail_from } = JSON.parse(body) as {
+  const { message, id, rcpt_to, mail_from, base64 } = JSON.parse(body) as {
     message: string;
     id: string;
     rcpt_to: string;
     mail_from: string;
+    base64: boolean;
   };
+
+  const decodedMessage = base64
+    ? Buffer.from(message, 'base64').toString('utf-8')
+    : message;
 
   console.log(`Email received: ${id} from ${mail_from} to ${rcpt_to}`);
   const email = await db.query.emails.findFirst({
@@ -40,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
     );
     return new Response(null);
   }
-  const parsedMessage = await simpleParser(message);
+  const parsedMessage = await simpleParser(decodedMessage);
   const bodyHtml = parsedMessage.html || parsedMessage.textAsHtml;
   if (!bodyHtml) {
     console.log(`Email has no body: ${id}, Dropping email.`);
