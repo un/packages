@@ -10,18 +10,22 @@
   import { toDataURL } from 'qrcode';
   import { Skeleton } from '@components/ui/skeleton';
   import { toast } from 'svelte-sonner';
+  import { Turnstile } from 'svelte-turnstile';
+  import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
 
   export let data: PageData;
   let copied = false;
+  let turnstileResponse: string;
 
   function copyEmail() {
-    navigator.clipboard.writeText(data.email).then(() => {
+    navigator.clipboard.writeText(data.email || '').then(() => {
       copied = true;
       setTimeout(() => {
         copied = false;
       }, 2000);
     });
   }
+
   let pending = false;
   async function checkStatus() {
     if (pending) return;
@@ -33,9 +37,33 @@
         pending = false;
       });
     if (status.received) {
+      toast('We have received your mail. Redirecting to the result page...');
       goto('/result');
     } else {
       toast("We didn't receive any mail on that address yet");
+    }
+  }
+
+  async function generateEmail() {
+    if (!turnstileResponse) return;
+    pending = true;
+    const email = await fetch('/api/generate-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token: turnstileResponse })
+    })
+      .then((res) => res.json())
+      .catch(() => {
+        toast('Failed to generate email address. Please try again later.');
+        return null;
+      })
+      .finally(() => {
+        pending = false;
+      });
+    if (email) {
+      data.email = email.email;
     }
   }
 </script>
@@ -69,57 +97,86 @@
           </Card.Description>
         </Card.Header>
         <Card.Content>
-          <div class="mx-auto flex w-full max-w-md flex-col items-center gap-4">
-            <div>
-              {#await toDataURL( `mailto:${data.email}`, { margin: 2, scale: 6 } )}
-                <Skeleton class="aspect-square w-48" />
-              {:then qrCode}
-                <img
-                  src={qrCode}
-                  alt="Mail to {data.email}"
-                  class="w-48 select-none rounded-md" />
-              {/await}
-            </div>
+          {#if data.email}
             <div
-              class="border-secondary min-w-3/4 flex items-center justify-center rounded-md border p-3">
-              <span class="h-full w-full flex-1 select-all font-mono">
-                {data.email}
-              </span>
-              <Tooltip.Root>
-                <Tooltip.Trigger
-                  asChild
-                  let:builder>
-                  <Button
-                    builders={[builder]}
-                    size="icon"
-                    variant="ghost"
-                    on:click={copyEmail}>
-                    <span class="sr-only">Copy email</span>
-                    {#if copied}
-                      <Check size="16" />
-                    {:else}
-                      <Copy size="16" />
-                    {/if}
-                  </Button>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  <p>Copy to Clipboard</p>
-                </Tooltip.Content>
-              </Tooltip.Root>
+              class="mx-auto flex w-full max-w-md flex-col items-center gap-4">
+              <div>
+                {#await toDataURL( `mailto:${data.email}`, { margin: 2, scale: 6 } )}
+                  <Skeleton class="aspect-square w-48" />
+                {:then qrCode}
+                  <img
+                    src={qrCode}
+                    alt="Mail to {data.email}"
+                    class="w-48 select-none rounded-md" />
+                {/await}
+              </div>
+              <div
+                class="border-secondary min-w-3/4 flex items-center justify-center rounded-md border p-3">
+                <span class="h-full w-full flex-1 select-all font-mono">
+                  {data.email}
+                </span>
+                <Tooltip.Root>
+                  <Tooltip.Trigger
+                    asChild
+                    let:builder>
+                    <Button
+                      builders={[builder]}
+                      size="icon"
+                      variant="ghost"
+                      on:click={copyEmail}>
+                      <span class="sr-only">Copy email</span>
+                      {#if copied}
+                        <Check size="16" />
+                      {:else}
+                        <Copy size="16" />
+                      {/if}
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    <p>Copy to Clipboard</p>
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </div>
+              <div>
+                <p class="text-muted-foreground text-center text-sm">
+                  Click <a
+                    href={`mailto:${data.email}`}
+                    class="underline"
+                    target="_blank">here</a> to open the address in your default
+                  email client
+                </p>
+              </div>
+              <Button
+                class="font-bold"
+                on:click={checkStatus}
+                disabled={pending}>I have sent the mail!</Button>
             </div>
-            <div>
-              <p class="text-muted-foreground text-center text-sm">
-                Click <a
-                  href={`mailto:${data.email}`}
-                  class="underline">here</a> to open the address in your default
-                email client
-              </p>
+          {:else}
+            <div class="flex flex-col items-center gap-4 p-4">
+              <h2 class="font-bold">
+                We will generate a unique email address for you to send your
+                mail.
+              </h2>
+              <Turnstile
+                siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+                theme="auto"
+                on:turnstile-callback={(e) => {
+                  turnstileResponse = e.detail.token;
+                }} />
+              <Button
+                variant="default"
+                disabled={!turnstileResponse || pending}
+                on:click={generateEmail}>
+                {#if !turnstileResponse}
+                  Waiting for Captcha...
+                {:else if pending}
+                  Processing...
+                {:else}
+                  Generate
+                {/if}
+              </Button>
             </div>
-            <Button
-              class="font-bold"
-              on:click={checkStatus}
-              disabled={pending}>I have sent the mail!</Button>
-          </div>
+          {/if}
         </Card.Content>
       </Card.Root>
     </Tabs.Content>

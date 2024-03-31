@@ -22,14 +22,31 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     columns: {
       id: true,
       emailReceived: true
+    },
+    with: {
+      feedback: {
+        columns: {
+          createdAt: true
+        }
+      }
     }
   });
 
   if (!email || !email.emailReceived) {
-    error(401, 'Unauthorized');
+    error(401, 'You are not authorized to submit feedback for this email.');
+  }
+
+  if (email.feedback.createdAt) {
+    return json({ success: false, message: 'Feedback already submitted' });
   }
 
   const body = await request.json();
+  if (body.feedback.length > 1024) {
+    return json({
+      success: false,
+      message: 'Feedback too long (max 1024 characters)'
+    });
+  }
 
   await db.insert(parserFeedback).values({
     emailId: email.id,

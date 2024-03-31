@@ -53,6 +53,9 @@ importers:
       svelte-sonner:
         specifier: ^0.3.20
         version: 0.3.20(svelte@4.2.12)
+      svelte-turnstile:
+        specifier: ^0.5.0
+        version: 0.5.0(svelte@4.2.12)
       tailwind-merge:
         specifier: ^2.2.2
         version: 2.2.2
@@ -4230,6 +4233,15 @@ packages:
       svelte: 4.2.12
     dev: false
 
+  /svelte-turnstile@0.5.0(svelte@4.2.12):
+    resolution: {integrity: sha512-FD/XOfyN2gOr7csfThLyrS/sSsRd2zgVfm5pwE1KvpWQHJYqx1HL/PQ92WEw8peL+SPqoKYx2619aZ65uPUsxg==}
+    peerDependencies:
+      svelte: ^3.58.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.12
+      turnstile-types: 1.2.0
+    dev: false
+
   /svelte@4.2.12:
     resolution: {integrity: sha512-d8+wsh5TfPwqVzbm4/HCXC783/KPHV60NvwitJnyTA5lWn1elhXMNWhXGCJ7PwPa8qFUnyJNIyuIRt2mT0WMug==}
     engines: {node: '>=16'}
@@ -4433,6 +4445,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
+
+  /turnstile-types@1.2.0:
+    resolution: {integrity: sha512-cTtNEtCYpcXeXR5AOD0YR0xZpXk1iZeTOuXT5vAGNowGGdgapC+k6m/lOVSkmDOUopZmPtmu311XeULIro4gUA==}
+    dev: false
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
