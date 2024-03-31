@@ -10,7 +10,7 @@ import { simpleParser } from 'mailparser';
 const postalPublicKeys = JSON.parse(POSTAL_PUBLIC_KEYS) as string[];
 
 export const POST: RequestHandler = async ({ request }) => {
-  const body = await request.text();
+  const body = await request.json();
   const signature = request.headers.get('x-postal-signature');
   if (!signature) {
     error(401, 'No signature provided');
@@ -23,7 +23,7 @@ export const POST: RequestHandler = async ({ request }) => {
   if (!valid) {
     error(401, 'Invalid signature');
   }
-  const { message, id, rcpt_to, mail_from, base64 } = JSON.parse(body) as {
+  const { message, id, rcpt_to, mail_from, base64 } = body as {
     message: string;
     id: string;
     rcpt_to: string;
