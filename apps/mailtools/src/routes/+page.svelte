@@ -81,7 +81,7 @@
               {/await}
             </div>
             <div
-              class="border-secondary flex w-3/4 items-center justify-center rounded-md border p-3">
+              class="border-secondary min-w-3/4 flex items-center justify-center rounded-md border p-3">
               <span class="h-full w-full flex-1 select-all font-mono">
                 {data.email}
               </span>
