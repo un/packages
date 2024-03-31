@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     error(401, 'You are not authorized to submit feedback for this email.');
   }
 
-  if (email.feedback.createdAt) {
+  if (email?.feedback?.createdAt) {
     return json({ success: false, message: 'Feedback already submitted' });
   }
 
