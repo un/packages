@@ -8,13 +8,25 @@
 <header class="w-full border-b">
   <div class="mx-auto max-w-screen-lg px-3 py-4">
     <div class="flex items-center justify-between">
-      <a
-        href="/"
-        class="text-primary text-2xl font-bold">MailTools</a>
+      <div class="flex flex-col items-center">
+        <a
+          href="/"
+          class="text-primary text-2xl font-bold leading-5">MailTools</a>
+        <span class="font-semibold leading-5">
+          By
+          <a
+            href="https://uninbox.com"
+            target="_blank"
+            class="text-primary text-xs underline"
+            >UnInbox Team
+          </a>
+        </span>
+      </div>
       <nav class="flex gap-2">
         <Button
-          href="/github"
+          href="https://github.com/un/packages/tree/main/packages/mailtools"
           variant="ghost"
+          target="_blank"
           size="icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"

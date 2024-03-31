@@ -70,7 +70,24 @@
 
 <main
   class="mx-auto flex w-full max-w-screen-lg flex-1 flex-col gap-3 px-3 py-4">
-  <h1 class="text-3xl font-bold">Send Your Mail</h1>
+  <h2 class="text-3xl font-bold">What is MailTools?</h2>
+  <p>
+    <a
+      href="https://www.npmjs.com/package/@u22n/mailtools"
+      class="font-mono underline"
+      target="_blank">
+      <code>@u22n/mailtools</code></a>
+    is an npm package for parsing emails to clean up the content, remove trackers
+    and extract signatures.
+  </p>
+  <p>
+    We use it internally at
+    <a
+      href="https://uninbox.com"
+      class="underline"
+      target="_blank">UnInbox</a> to clean up emails before displaying them to users.
+  </p>
+  <h2 class="pt-6 text-3xl font-bold">Get a Live Demo</h2>
   <Tabs.Root value="email">
     <Tabs.List>
       <Tabs.Trigger value="email">
