@@ -12,12 +12,12 @@
         <a
           href="/"
           class="text-primary text-2xl font-bold leading-5">MailTools</a>
-        <span class="font-semibold leading-5">
+        <span class="text-xs font-semibold leading-5">
           By
           <a
             href="https://uninbox.com"
             target="_blank"
-            class="text-primary text-xs underline"
+            class="text-primary underline"
             >UnInbox Team
           </a>
         </span>
