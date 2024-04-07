@@ -82,12 +82,15 @@ function removeSignatures(
 function findAllSignatures($: CheerioAPI) {
   const signatureElements = $(
     [
-      // Signatures.
-      '.gmail_signature',
+      // Known Signature Matchers
       'signature',
-      '#Signature', // outlook web
-      '[class*="signature"]', // sig partial match for class names
-      '[id*="signature"]' // sig partial match for id names
+      '.gmail_signature',
+      '.protonmail_signature_block',
+      '#ms-outlook-mobile-signature',
+      '#Signature', // outlook web,
+      // Generic Signature Matchers
+      '[class*="signature"]',
+      '[id*="signature"]'
     ].join(', ')
   );
 
