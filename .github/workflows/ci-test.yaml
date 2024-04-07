@@ -36,5 +36,8 @@ jobs:
       - name: Install Dependencies 📦
         run: pnpm install
 
+      - name: Copy Example Env 📝
+        run: cp apps/mailtools/.env.example apps/mailtools/.env
+
       - name: Check 🚨
         run: pnpm ci:run

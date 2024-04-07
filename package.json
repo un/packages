@@ -8,7 +8,7 @@
     "check": "pnpm -r run check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "ci:run": "pnpm format:check && pnpm check && pnpm test"
+    "ci:run": "pnpm format:check && pnpm build && pnpm check && pnpm test"
   },
   "keywords": [
     "u22n"
