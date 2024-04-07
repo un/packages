@@ -5,7 +5,10 @@
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
-    "format": "prettier --write ."
+    "check": "pnpm -r run check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "ci:run": "pnpm format:check && pnpm check && pnpm test"
   },
   "keywords": [
     "u22n"
