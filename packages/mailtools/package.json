@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup",
+    "check": "tsc --noEmit",
     "start": "tsx playground/index.ts",
     "test": "vitest run",
     "test:ui": "vitest --ui",
