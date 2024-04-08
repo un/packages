@@ -28,7 +28,7 @@ function removeQuotations($: CheerioAPI): { didFindQuotation: boolean } {
  * Returns a selection of all quote elements that should be removed
  */
 function findAllQuotes($: CheerioAPI) {
-  const quoteElements = $(
+  let quoteElements = $(
     [
       '.gmail_quote',
       'blockquote',
@@ -38,7 +38,11 @@ function findAllQuotes($: CheerioAPI) {
       // ENHANCEMENT: Add findQuotesAfter__OriginalMessage__
     ].join(', ')
   );
-  // console.log(quoteElements.html());
+
+  if (quoteElements.length === 0) {
+    quoteElements = findAllQuotesOutlook($);
+  }
+
   // Ignore inline quotes. Quotes that are followed by non-quote blocks.
   const quoteElementsSet = new Set(toArray(quoteElements));
   const withoutInlineQuotes = quoteElements.filter(
@@ -46,6 +50,18 @@ function findAllQuotes($: CheerioAPI) {
   );
 
   return withoutInlineQuotes;
+}
+
+// its always outlook that has everything built different
+function findAllQuotesOutlook($: CheerioAPI) {
+  const quoteStart = $("div[style*='border-top']").first();
+  const quotation = quoteStart.add(quoteStart.nextAll());
+  if (quotation.length === 0) {
+    return $();
+  }
+  const newHolder = $('<div></div>');
+  quotation.each((_, el) => void newHolder.append($(el)));
+  return newHolder;
 }
 
 /**
