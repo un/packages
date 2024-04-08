@@ -116,8 +116,11 @@ We picked up on `tempo-email-parser` which was not being maintained any more and
 
 ## Limitations
 
-It seems like we are unable to extract outlook signatures correctly. We need more source emails to add to the parsing tests and functions.
-If you can help out with this, please open an issue with some html emails we can use
+Its nearly impossible to parse every kind of outlook emails. We have implemented some measures to be able to parse them but we are not able to parse certain kind of signatures from them. Its totally impossible for us to parse them with out using some kind of LLM. Thats also might not be accurate.
+
+We have covered major providers like gmail, newer outlook clients, proton mail and a few others.
+
+You can help us improve this package by testing your email clients and signatures at <https://tools.unin.sh> and report in the built-in feedback system.
 
 ## License
 

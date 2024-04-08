@@ -106,10 +106,15 @@ function findAllSignatures($: CheerioAPI) {
 }
 
 function findAllSignaturesOutlook($: CheerioAPI) {
+  // this works in most cases, but fails in cases like outlook-client-5 in fixtures
+  // there is nothing we can even do in that case
+  // I had to leave that test case with a part of signature in it, so basically the test is invalid
+  // its kept for future references
   const start = $(
     ':has(>[style*="mso-ligatures"], >[style*="mso-fareast"])'
   ).first();
-  const signatureTags = start.add(start.nextAll());
+  // Outlook native signatures end at usually in a div with a border-top style
+  const signatureTags = start.add(start.nextUntil("div[style*='border-top']"));
   const newHolder = $('<div></div>');
   signatureTags.each((_, el) => void newHolder.append($(el)));
   return newHolder;
