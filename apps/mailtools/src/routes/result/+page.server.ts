@@ -7,7 +7,7 @@ import { error } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ cookies, url }) => {
   const token = url.searchParams.get('token') || cookies.get('token');
   const email = await db.query.emails.findFirst({
-    where: and(eq(emails.token, token || '')),
+    where: and(eq(emails.token, token || 'none')),
     columns: {
       emailReceived: true
     },

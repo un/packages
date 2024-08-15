@@ -12,6 +12,10 @@
   import { toast } from 'svelte-sonner';
   import { Turnstile } from 'svelte-turnstile';
   import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
+  import Dropzone from '@components/custom/Dropzone.svelte';
+  import { Badge } from '@components/ui/badge';
+  import { Textarea } from '@components/ui/textarea';
+  import Error from './+error.svelte';
 
   export let data: PageData;
   let copied = false;
@@ -66,6 +70,58 @@
       data.email = email.email;
     }
   }
+
+  let file: File | null = null;
+  let fileContents = '';
+  async function uploadFile() {
+    if (!turnstileResponse) return;
+    if (file && fileContents) {
+      toast.warning(
+        'Please Either upload a file or paste the contents, not both, refresh the page to try again'
+      );
+      return;
+    }
+
+    pending = true;
+    const formData = new FormData();
+    if (fileContents) {
+      formData.append(
+        'file',
+        new Blob([fileContents], { type: 'message/rfc822' }),
+        'email.eml'
+      );
+    } else if (file) {
+      formData.append('file', file, 'email.eml');
+    } else {
+      toast.warning('Please upload a file or paste the contents');
+      return;
+    }
+    formData.append('token', turnstileResponse);
+
+    const response = await fetch('/api/upload-file', {
+      method: 'POST',
+      body: formData
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        toast(
+          err instanceof Error
+            ? err.message
+            : 'Failed to upload email. Please try again '
+        );
+        return null;
+      })
+      .finally(() => {
+        pending = false;
+      });
+
+    if (response.success) {
+      toast('Email uploaded successfully. Redirecting to the result page...');
+      goto('/result');
+    } else {
+      toast(response.message);
+    }
+  }
 </script>
 
 <main
@@ -88,11 +144,21 @@
       target="_blank">UnInbox</a> to clean up emails before displaying them to users.
   </p>
   <h2 class="pt-6 text-3xl font-bold">Get a Live Demo</h2>
-  <Tabs.Root value="email">
+  <Tabs.Root value="file">
     <Tabs.List>
-      <Tabs.Trigger value="email">
-        <span class="flex gap-1">Send us an Email</span>
-      </Tabs.Trigger>
+      <Tooltip.Root>
+        <Tooltip.Trigger>
+          <Tabs.Trigger
+            value="email"
+            disabled>
+            <span class="flex gap-1">Send us an Email</span>
+          </Tabs.Trigger>
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          Disabled for now as we have disabled the spare email server
+          temporarily.
+        </Tooltip.Content>
+      </Tooltip.Root>
       <Tabs.Trigger value="file">
         <span class="flex gap-1">
           <code>.eml</code> File
@@ -174,12 +240,7 @@
                 We will generate a unique email address for you to send your
                 mail.
               </h2>
-              <Turnstile
-                siteKey={PUBLIC_TURNSTILE_SITE_KEY}
-                theme="auto"
-                on:turnstile-callback={(e) => {
-                  turnstileResponse = e.detail.token;
-                }} />
+
               <Button
                 variant="default"
                 disabled={!turnstileResponse || pending}
@@ -213,13 +274,11 @@
           </Card.Description>
         </Card.Header>
         <Card.Content>
-          <div class="flex flex-col">
-            <h2 class="mx-auto text-2xl font-bold">
-              <span class="animate-pulse">🚧</span>
-              <span>Work in Progress</span>
-              <span class="animate-pulse">🚧</span>
-            </h2>
-            <!-- <Dropzone />
+          <div class="flex flex-col items-center justify-center gap-2">
+            <Dropzone
+              onFileAdded={(f) => {
+                file = f;
+              }} />
             <div
               class="relative mx-auto flex w-3/4 items-center justify-center px-2 py-8">
               <hr class="w-full" />
@@ -229,10 +288,34 @@
             </div>
             <Textarea
               placeholder="Paste file contents here"
-              class="font-mono" />
-          </div> -->
-          </div></Card.Content>
+              class="font-mono"
+              bind:value={fileContents} />
+
+            <Button
+              variant="default"
+              disabled={!turnstileResponse ||
+                pending ||
+                (!file && !fileContents)}
+              on:click={uploadFile}>
+              {#if !turnstileResponse}
+                Waiting for Captcha...
+              {:else if pending}
+                Uploading...
+              {:else}
+                Upload
+              {/if}
+            </Button>
+          </div>
+        </Card.Content>
       </Card.Root>
     </Tabs.Content>
   </Tabs.Root>
+  <div class="mx-auto flex w-fit flex-col items-center justify-center gap-2">
+    <Turnstile
+      siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+      theme="auto"
+      on:turnstile-callback={(e) => {
+        turnstileResponse = e.detail.token;
+      }} />
+  </div>
 </main>
