@@ -43,7 +43,7 @@
     "@u22n/mailtools": "workspace:^",
     "bits-ui": "^0.21.13",
     "clsx": "^2.1.1",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.45.2",
     "lucide-svelte": "^0.427.0",
     "mode-watcher": "^0.4.1",
     "nanoid": "^5.0.7",
